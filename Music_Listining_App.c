@@ -79,11 +79,65 @@ void createSongs(SongNode** head,int songNumber){
 	}
 }
 
+void createUserPlaylist(SongNode* allSong, SongNode** userList, int totalSong){
+	
+	int* selected = (int*)calloc(totalSong,sizeof(int));
+	if(selected == NULL){
+		printf("Selected dizisi icin yer ayrilamadi!\n");
+		exit(1);
+	}
+	
+	int userSongCount = 3 + (rand() % 10);
+	int i=0, j , k;
+	SongNode* temp;
+	while(i != userSongCount){
+		k = rand() % totalSong;
+		
+		if(selected[k] == 0){
+			selected[k] =1;
+			
+			temp = allSong;
+			
+			for(j=0;j<k;j++){
+				temp = temp->next;
+			}
+			
+			addSong(userList, temp->data.name, temp->data.duration);
+			i++;
+		}
+	}
+	
+	free(selected);
+}
+
 int main(){
 
-	SongNode* allSong = NULL;
-	createSongs(&allSong,100);
+	int userCount, totalSong=100, i;
 	
-	printCircularList(allSong);
+	srand(time(NULL));
+		
+	SongNode* allSong = NULL;
+	createSongs(&allSong,totalSong);
+	
+	printf("Kulanici Sayisi: ");
+	scanf("%d",&userCount);
+	
+	SongNode** userPlaylists = (SongNode**)malloc(userCount*sizeof(SongNode*));
+	
+	if (userPlaylists == NULL) {
+    	printf("userPlaylists icin bellek ayrilamadi!\n");
+    	exit(1);
+	}
+	
+	for(i=0;i<userCount;i++){
+		userPlaylists[i] = NULL;
+		
+		createUserPlaylist(allSong, &userPlaylists[i], totalSong);
+		
+		printCircularList(userPlaylists[i]);
+		printf("\n\n\n");
+	}
+	
+	
 	return 0;
 }
